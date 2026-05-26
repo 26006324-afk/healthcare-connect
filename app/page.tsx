@@ -319,10 +319,20 @@ export default function HomePage() {
     window.setTimeout(() => setToast(""), 2600);
   };
 
-  const goToScreen = (screen: ScreenName) => {
-    setActiveView(screen);
-    setProfilePanelOpen(false);
-  };
+ const goToScreen = (screen: ScreenName) => {
+  setActiveView(screen);
+  setProfilePanelOpen(false);
+
+  document.documentElement.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+
+  document.body.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
   const ActiveModeIcon = modeDetails[mode].icon;
 
