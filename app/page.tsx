@@ -412,7 +412,7 @@ export default function HomePage() {
         </section>
       </div>
 
-      <MobileNav activeView={activeView} goToScreen={goToScreen} />
+     {/* <MobileNav activeView={activeView} goToScreen={goToScreen} /> */}
 
       {profilePanelOpen ? (
         <ProfilePanel mode={mode} setMode={setMode} activeIcon={ActiveModeIcon} closePanel={() => setProfilePanelOpen(false)} openProfile={() => goToScreen("Perfil")} />
