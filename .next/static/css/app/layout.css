@@ -660,6 +660,9 @@ video {
 .overflow-x-auto {
   overflow-x: auto;
 }
+.overflow-y-auto {
+  overflow-y: auto;
+}
 .rounded-lg {
   border-radius: 0.5rem;
 }
@@ -813,6 +816,9 @@ video {
 }
 .font-semibold {
   font-weight: 600;
+}
+.font-medium {
+  font-weight: 500;
 }
 .uppercase {
   text-transform: uppercase;
@@ -1023,6 +1029,11 @@ input {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-slate-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:text-mint-700:hover {
   --tw-text-opacity: 1;
   color: rgb(20 125 104 / var(--tw-text-opacity, 1));
@@ -1103,6 +1114,10 @@ input {
 
   .lg\:top-4 {
     top: 1rem;
+  }
+
+  .lg\:flex {
+    display: flex;
   }
 
   .lg\:grid {

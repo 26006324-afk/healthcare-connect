@@ -340,7 +340,7 @@ export default function HomePage() {
     <main className={`px-4 py-4 pb-36 text-slate-800 sm:px-6 lg:px-8 lg:pb-6 ${shellClass}`}>
       {toast ? <Toast message={toast} /> : null}
       <div className="mx-auto flex max-w-7xl flex-col gap-4 lg:grid lg:grid-cols-[292px_1fr]">
-        <aside className="rounded-lg border border-white/80 bg-white/85 p-4 shadow-soft backdrop-blur lg:sticky lg:top-4 lg:self-start">
+        <aside className="hidden lg:flex rounded-lg ...">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="grid size-11 place-items-center rounded-lg bg-mint-100 text-mint-700">
@@ -415,7 +415,7 @@ export default function HomePage() {
      {/* <MobileNav activeView={activeView} goToScreen={goToScreen} /> */}
 
       {profilePanelOpen ? (
-        <ProfilePanel mode={mode} setMode={setMode} activeIcon={ActiveModeIcon} closePanel={() => setProfilePanelOpen(false)} openProfile={() => goToScreen("Perfil")} />
+        <ProfilePanel mode={mode} setMode={setMode} activeIcon={ActiveModeIcon} closePanel={() => setProfilePanelOpen(false)} openProfile={() => goToScreen("Perfil")} goToScreen={goToScreen}/>
       ) : null}
     </main>
   );
@@ -1001,17 +1001,19 @@ function ProfilePanel({
   setMode,
   activeIcon,
   closePanel,
-  openProfile
+  openProfile,
+goToScreen
 }: {
   mode: InteractionMode;
   setMode: (mode: InteractionMode) => void;
   activeIcon: typeof TextCursorInput;
   closePanel: () => void;
   openProfile: () => void;
+  goToScreen: (screen: ScreenName) => void;
 }) {
   return (
     <div className="fixed inset-0 z-40 bg-slate-950/30 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Panel de perfil y configuracion">
-      <aside className="ml-auto flex h-full max-w-md flex-col rounded-lg bg-white p-4 shadow-soft">
+      <aside className="ml-auto flex h-full max-w-md flex-col overflow-y-auto rounded-lg bg-white p-4 shadow-soft">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-950">Perfil y configuracion</h3>
           <button onClick={closePanel} className="grid size-10 place-items-center rounded-lg border border-slate-200 text-slate-700" aria-label="Cerrar panel">
@@ -1027,10 +1029,29 @@ function ProfilePanel({
             </div>
           </div>
         </div>
-        <div className="mt-4 grid gap-3">
-          <Metric label="Modo activo" value={modeDetails[mode].label} />
-          <Metric label="Unidad medica" value="UMF 24" />
+        <div className="mt-5 grid gap-2">
+  {navItems.map((item) => {
+    const Icon = item.icon;
+
+    return (
+      <button
+        key={item.label}
+        onClick={() => {
+          goToScreen(item.label);
+          closePanel();
+        }}
+        className="flex items-center justify-between rounded-lg px-4 py-3 text-left text-slate-700 transition hover:bg-slate-100"
+      >
+        <div className="flex items-center gap-3">
+          <Icon size={20} />
+          <span className="font-medium">{item.label}</span>
         </div>
+
+        <ChevronRight size={18} />
+      </button>
+    );
+  })}
+</div>
         <div className="mt-4">
           <AccessibilitySelector mode={mode} setMode={setMode} activeIcon={activeIcon} />
         </div>
