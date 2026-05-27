@@ -4,6 +4,7 @@ import {
   Accessibility,
   Bell,
   Bot,
+  Send,
   CalendarClock,
   CalendarDays,
   CheckCircle2,
@@ -197,7 +198,6 @@ const navItems = [
   { label: "Documentos", icon: FileHeart },
   { label: "IA y soporte", icon: Bot },
   { label: "Pagos", icon: CreditCard },
-  { label: "Perfil", icon: CircleUserRound }
 ] satisfies Array<{ label: ScreenName; icon: typeof Home }>;
 
 const modeDetails: Record<InteractionMode, { label: string; status: string; helper: string; icon: typeof TextCursorInput }> = {
@@ -302,11 +302,15 @@ export default function HomePage() {
   const [activeView, setActiveView] = useState<ScreenName>("Inicio");
   const [mode, setMode] = useState<InteractionMode>("texto");
   const [profilePanelOpen, setProfilePanelOpen] = useState(false);
+  const [quickMessage, setQuickMessage] = useState("");
+  const [accountPanelOpen, setAccountPanelOpen] = useState(false);
   const [casesList, setCasesList] = useState<SupportCase[]>(initialCases);
   const [appointmentsList, setAppointmentsList] = useState<Appointment[]>(initialAppointments);
   const [documentsList, setDocumentsList] = useState<MedicalDocument[]>(initialDocuments);
   const [paymentsList, setPaymentsList] = useState<Payment[]>(initialPayments);
   const [toast, setToast] = useState("");
+  const [aiMessages, setAiMessages] = useState<string[]>([]);
+  const [assistantExpanded, setAssistantExpanded] = useState(true);
 
   const shellClass = useMemo(() => {
     if (mode === "voz") return "voice-mode";
@@ -339,9 +343,8 @@ export default function HomePage() {
   return (
     <main className={`px-4 py-4 pb-36 text-slate-800 sm:px-6 lg:px-8 lg:pb-6 ${shellClass}`}>
       {toast ? <Toast message={toast} /> : null}
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 lg:grid lg:grid-cols-[292px_1fr]">
-        <aside className="hidden lg:flex rounded-lg ...">
-          <div className="flex items-center justify-between">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4">
+          <div className="sticky top-0 z-50 flex items-center justify-between rounded-lg bg-white/80 p-2 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="grid size-11 place-items-center rounded-lg bg-mint-100 text-mint-700">
                 <HeartPulse size={24} aria-hidden="true" />
@@ -351,39 +354,34 @@ export default function HomePage() {
                 <p className="text-sm text-slate-500">Portal digital del paciente</p>
               </div>
             </div>
-            <button
-              className="grid size-10 place-items-center rounded-lg border border-slate-200 text-slate-700"
-              onClick={() => setProfilePanelOpen(true)}
-              aria-label="Abrir perfil y configuracion"
-            >
-              <Menu size={20} />
-            </button>
+            <div className="flex items-center gap-3">
+
+  <button
+  onClick={() => setAccountPanelOpen(!accountPanelOpen)}
+  className="relative transition hover:scale-105"
+>
+    <img
+      src="https://i.pravatar.cc/150?img=32"
+      alt="Foto del paciente"
+      className="h-11 w-11 rounded-full object-cover border border-white shadow-sm"
+    />
+
+    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500"></span>
+  </button>
+
+  <button
+    className="grid size-10 place-items-center rounded-lg border border-slate-200 text-slate-700"
+    onClick={() => setProfilePanelOpen(!profilePanelOpen)}
+    aria-label="Abrir menu"
+  >
+    <Menu size={20} />
+  </button>
+
+</div>
           </div>
 
-          <section className="mt-5 rounded-lg bg-skycare-50 p-4">
-            <div className="flex items-center gap-3">
-              <CircleUserRound className="text-skycare-700" size={30} aria-hidden="true" />
-              <div>
-                <p className="font-semibold text-slate-900">Maya Thompson</p>
-                <p className="text-sm text-slate-500">NSS 2048-52-11</p>
-              </div>
-            </div>
-            <div className="secondary-detail mt-4 grid gap-2 text-sm text-slate-600">
-              <p>UMF asignada: 24</p>
-              <p>Vigencia: activa</p>
-              <p>Soporte digital conectado</p>
-            </div>
-          </section>
-
-          <nav className="mt-5 hidden gap-2 lg:grid" aria-label="Navegacion principal">
-            {navItems.map((item) => (
-              <NavButton key={item.label} item={item} active={activeView === item.label} onClick={() => goToScreen(item.label)} />
-            ))}
-          </nav>
-        </aside>
-
         <section className="flex flex-col gap-4">
-          <header className="animate-soft-in rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft backdrop-blur">
+          <header className="animate-soft-in rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <p className="text-sm font-semibold text-mint-700">{screenCopy[activeView].eyebrow}</p>
@@ -396,6 +394,8 @@ export default function HomePage() {
           <ScreenContent
             activeView={activeView}
             goToScreen={goToScreen}
+            aiMessages={aiMessages}
+            setAiMessages={setAiMessages}
             casesList={casesList}
             setCasesList={setCasesList}
             appointmentsList={appointmentsList}
@@ -411,12 +411,126 @@ export default function HomePage() {
           />
         </section>
       </div>
+<div className="fixed bottom-6 right-6 z-30">
 
+ <div
+  onClick={() => {
+    if (!assistantExpanded) {
+      setAssistantExpanded(true);
+    }
+  }}
+  className={`
+    rounded-[40px] bg-slate-900 text-white shadow-2xl transition-all duration-300
+    ${assistantExpanded
+      ? "w-96 rounded-3xl p-3"
+      : "flex h-16 w-16 items-center justify-center p-0"
+    }
+  `}
+>
+    {assistantExpanded && (
+      <>
+
+        <div className="flex items-start gap-3">
+
+  <div className="grid h-10 w-10 place-items-center rounded-full bg-white/10">
+    <Bot size={24} />
+  </div>
+
+  <div>
+    <p className="text-sm font-semibold">
+      Hola, Maya 👋
+    </p>
+
+    <p className="text-xs text-slate-300">
+      ¿En qué puedo ayudarte hoy?
+    </p>
+  </div>
+
+</div>
+
+<div className="mt-4 flex w-full items-center gap-2 rounded-2xl bg-white p-3">
+
+          <input
+            type="text"
+            value={quickMessage}
+            onChange={(e) => setQuickMessage(e.target.value)}
+            placeholder="Escribe tu duda..."
+            className="flex-1 bg-transparent px-2 text-sm text-slate-700 outline-none"
+          />
+
+          <button
+            onClick={() => {
+
+              if (!quickMessage.trim()) return;
+
+              setAiMessages((prev) => [...prev, quickMessage]);
+
+              goToScreen("IA y soporte");
+
+              setQuickMessage("");
+              setAssistantExpanded(false);
+
+            }}
+            className="grid min-w-[36px] h-9 place-items-center rounded-[40px] bg-emerald-600 text-white"
+          >
+            <Send size={18} />
+          </button>
+
+        </div>
+
+      </>
+    )}
+{!assistantExpanded && <Bot size={26} />}
+  </div>
+
+</div>
      {/* <MobileNav activeView={activeView} goToScreen={goToScreen} /> */}
 
       {profilePanelOpen ? (
-        <ProfilePanel mode={mode} setMode={setMode} activeIcon={ActiveModeIcon} closePanel={() => setProfilePanelOpen(false)} openProfile={() => goToScreen("Perfil")} goToScreen={goToScreen}/>
-      ) : null}
+  <ProfilePanel
+    mode={mode}
+    setMode={setMode}
+    activeIcon={ActiveModeIcon}
+    closePanel={() => setProfilePanelOpen(false)}
+    openProfile={() => goToScreen("Perfil")}
+    goToScreen={goToScreen}
+  />
+) : null}
+{accountPanelOpen ? (
+  <div className="fixed right-6 top-20 z-50 w-64 rounded-2xl border border-white/60 bg-white/90 p-3 shadow-2xl backdrop-blur-md">
+
+    <button
+      onClick={() => {
+        goToScreen("Perfil");
+        setAccountPanelOpen(false);
+      }}
+      className="flex w-full items-center rounded-xl px-3 py-3 text-left text-slate-700 transition hover:bg-slate-100"
+    >
+      Perfil del paciente
+    </button>
+
+    <button
+      className="flex w-full items-center rounded-xl px-3 py-3 text-left text-slate-700 transition hover:bg-slate-100"
+    >
+      Configuracion
+    </button>
+
+    <button
+      className="flex w-full items-center rounded-xl px-3 py-3 text-left text-slate-700 transition hover:bg-slate-100"
+    >
+      Accesibilidad
+    </button>
+
+    <div className="my-2 border-t border-slate-200"></div>
+
+    <button
+      className="flex w-full items-center rounded-xl px-3 py-3 text-left text-red-500 transition hover:bg-red-50"
+    >
+      Cerrar sesion
+    </button>
+
+  </div>
+) : null}
     </main>
   );
 }
@@ -469,7 +583,7 @@ function AccessibilitySelector({
           );
         })}
       </div>
-      <div className="voice-highlight mt-3 flex items-start gap-3 rounded-lg bg-mint-50 px-3 py-3 text-sm text-mint-700">
+      <div className="voice-highlight mt-3 flex items-center gap-2 rounded-lg bg-mint-50 px-3 py-3 text-sm text-mint-700">
         <ActiveModeIcon className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
         <div>
           <p className="font-bold">{modeDetails[mode].status}</p>
@@ -491,6 +605,8 @@ type ScreenProps = {
   setDocumentsList: React.Dispatch<React.SetStateAction<MedicalDocument[]>>;
   paymentsList: Payment[];
   setPaymentsList: React.Dispatch<React.SetStateAction<Payment[]>>;
+  aiMessages: string[];
+setAiMessages: React.Dispatch<React.SetStateAction<string[]>>;
   notify: (message: string) => void;
   mode: InteractionMode;
   setMode: (mode: InteractionMode) => void;
@@ -510,25 +626,32 @@ function ScreenContent(props: ScreenProps) {
 function InicioScreen({ goToScreen, casesList, appointmentsList }: ScreenProps) {
   return (
     <div className="animate-soft-in grid gap-4 xl:grid-cols-[1fr_370px]">
+      
       <div className="grid gap-4">
+        
         <QuickSummary casesList={casesList} />
+
         <section className="grid gap-4 md:grid-cols-2">
           <PreviewCard title="Proximas citas" action="Ver agenda" onAction={() => goToScreen("Citas")}>
             {appointmentsList.slice(0, 2).map((item) => (
               <AppointmentCard key={item.id} item={item} compact />
             ))}
           </PreviewCard>
+
           <PreviewCard title="Casos activos" action="Ver casos" onAction={() => goToScreen("Casos")}>
             {casesList.slice(0, 2).map((item) => (
               <CaseCard key={item.id} item={item} compact />
             ))}
           </PreviewCard>
         </section>
+
       </div>
+
       <aside className="grid gap-4">
         <NotificationsPreview goToScreen={goToScreen} />
         <QuickActions goToScreen={goToScreen} />
       </aside>
+
     </div>
   );
 }
@@ -635,7 +758,7 @@ function DocumentsScreen({ documentsList, setDocumentsList, notify }: ScreenProp
   );
 }
 
-function SupportScreen({ casesList, setCasesList, notify, mode, setMode, activeIcon }: ScreenProps) {
+function SupportScreen({ casesList, setCasesList, notify, mode, setMode, activeIcon, aiMessages, setAiMessages}: ScreenProps) {
   const [problem, setProblem] = useState("");
   const [analysis, setAnalysis] = useState<IssueAnalysis | null>(null);
   const [ticketStatus, setTicketStatus] = useState<TicketStatus>("Nuevo");
@@ -648,6 +771,7 @@ function SupportScreen({ casesList, setCasesList, notify, mode, setMode, activeI
     if (!analysis) return casesList.slice(0, 3);
     return casesList.filter((item) => item.category === analysis.category || item.priority === analysis.priority).slice(0, 3);
   }, [analysis, casesList]);
+  const allMessages = [...aiMessages];
 
   const analyzeProblem = () => {
     if (!problem.trim()) return;
@@ -686,6 +810,17 @@ function SupportScreen({ casesList, setCasesList, notify, mode, setMode, activeI
     <div className="animate-soft-in grid gap-4 xl:grid-cols-[1fr_380px]">
       <section className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft">
         <SectionHeader title="Clasificacion e historial" text="Escribe un problema y la IA organiza categoria, prioridad, historial y estado." />
+        <div className="mb-4 grid gap-3">
+  {allMessages.map((message, index) => (
+    <div
+      key={index}
+      className="ml-auto max-w-sm rounded-2xl bg-slate-900 px-4 py-3 text-white shadow-lg"
+    >
+      {message}
+    </div>
+  ))}
+</div>
+
         <textarea
           className="mt-4 min-h-32 w-full rounded-lg border border-slate-200 bg-white p-3 text-sm leading-6 outline-none focus:border-mint-500"
           value={problem}
@@ -815,25 +950,72 @@ function ProfileScreen({
 }
 
 function QuickSummary({ casesList }: { casesList: SupportCase[] }) {
-  const highPriority = casesList.filter((item) => item.priority === "Alta").length;
+  const highPriority = casesList.filter(
+    (item) => item.priority === "Alta"
+  ).length;
+
   return (
-    <section className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold text-slate-950">Resumen rapido con IA</h3>
-          <p className="secondary-detail text-sm text-slate-500">Prioriza los siguientes pasos de tu atencion.</p>
-        </div>
-        <div className="grid size-10 place-items-center rounded-lg bg-lavender-50 text-lavender-500">
-          <Sparkles size={20} aria-hidden="true" />
-        </div>
-      </div>
-      <p className="simplified-text mt-4 rounded-lg bg-lavender-50 p-4 text-sm leading-6 text-slate-700">
-        Tienes {casesList.length} casos en el historial, {highPriority} de prioridad alta y una cita de medicina familiar el 28 de mayo. La siguiente accion sugerida es revisar documentos pendientes.
+    <section className="rounded-2xl border border-white/80 bg-white/90 p-4 shadow-soft">
+      <div className="mb-4 flex items-center justify-between">
+  <div>
+    <p className="text-sm font-semibold tracking-wide text-mint-700">
+      Perfil clinico
+    </p>
+
+    <h3 className="text-xl font-bold text-slate-900">
+      Datos del paciente
+    </h3>
+  </div>
+
+  <span className="rounded-full bg-mint-100 px-3 py-1 text-xs font-semibold text-mint-700">
+    Vigencia activa
+  </span>
+</div>
+  <div className="flex items-center gap-6 min-h-[260px]">
+
+    <img
+      src="https://i.pravatar.cc/150?img=32"
+      alt="Paciente"
+      className="h-44 w-44 rounded-3xl object-cover shadow-lg"
+    />
+
+    <div className="flex-1">
+      <h3 className="text-2xl font-bold text-slate-900">
+        Maya Thompson
+      </h3>
+
+      <p className="mt-1 text-sm text-slate-500">
+        NSS 2048-52-11
       </p>
-    </section>
+
+      <div className="mt-4 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
+
+        <div>
+          <span className="font-semibold">UMF:</span> 24
+        </div>
+
+        <div>
+          <span className="font-semibold">Tipo de sangre:</span> O+
+        </div>
+
+        <div>
+          <span className="font-semibold">Alergias:</span> Penicilina
+        </div>
+
+        <div>
+          <span className="font-semibold">Contacto:</span> Laura Thompson
+        </div>
+
+        <div>
+          <span className="font-semibold">Tel emergencia:</span> 55 1234 5678
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
   );
 }
-
 function PreviewCard({ title, action, onAction, children }: { title: string; action: string; onAction: () => void; children: React.ReactNode }) {
   return (
     <section className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft">
