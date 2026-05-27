@@ -411,7 +411,7 @@ export default function HomePage() {
           />
         </section>
       </div>
-<div className="fixed bottom-6 right-6 z-30">
+<div className="fixed bottom-4 right-4 z-30">
 
  <div
   onClick={() => {
@@ -422,7 +422,7 @@ export default function HomePage() {
   className={`
     rounded-[40px] bg-slate-900 text-white shadow-2xl transition-all duration-300
     ${assistantExpanded
-      ? "w-96 rounded-3xl p-3"
+      ? "w-[92vw] max-w-sm rounded-3xl p-4"
       : "flex h-16 w-16 items-center justify-center p-0"
     }
   `}
@@ -631,7 +631,7 @@ function InicioScreen({ goToScreen, casesList, appointmentsList }: ScreenProps) 
         
         <QuickSummary casesList={casesList} />
 
-        <section className="grid gap-4 md:grid-cols-2">
+        <section className="grid gap-4 lg:grid-cols-2">
           <PreviewCard title="Proximas citas" action="Ver agenda" onAction={() => goToScreen("Citas")}>
             {appointmentsList.slice(0, 2).map((item) => (
               <AppointmentCard key={item.id} item={item} compact />
@@ -928,11 +928,11 @@ function ProfileScreen({
     <div className="animate-soft-in grid gap-4 xl:grid-cols-[1fr_360px]">
       <section className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft">
         <SectionHeader title="Datos del paciente" text="Informacion de contacto, unidad asignada y seguridad de cuenta." />
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
           {[["Nombre", "Maya Thompson"], ["NSS", "2048-52-11"], ["Correo", "maya@correo-salud.mx"], ["Telefono", "+52 55 2100 3040"], ["Unidad", "UMF 24"], ["Vigencia", "Activa"]].map(([label, value]) => (
             <div key={label} className="rounded-lg bg-slate-50 p-4">
               <p className="text-sm text-slate-500">{label}</p>
-              <p className="mt-1 font-bold text-slate-950">{value}</p>
+              <p className="mt-1 break-words font-bold text-slate-950">{value}</p>
             </div>
           ))}
         </div>
@@ -1206,7 +1206,7 @@ goToScreen
           <div className="flex items-center gap-3">
             <CircleUserRound className="text-skycare-700" size={32} aria-hidden="true" />
             <div>
-              <p className="font-bold text-slate-950">Maya Thompson</p>
+              <p className="break-words font-bold text-slate-950">Maya Thompson</p>
               <p className="text-sm text-slate-500">NSS 2048-52-11</p>
             </div>
           </div>

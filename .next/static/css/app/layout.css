@@ -551,6 +551,9 @@ video {
 .bottom-28 {
   bottom: 7rem;
 }
+.bottom-4 {
+  bottom: 1rem;
+}
 .z-30 {
   z-index: 30;
 }
@@ -723,6 +726,9 @@ video {
 .w-96 {
   width: 24rem;
 }
+.w-\[92vw\] {
+  width: 92vw;
+}
 .min-w-\[92px\] {
   min-width: 92px;
 }
@@ -824,6 +830,9 @@ video {
 }
 .overflow-y-auto {
   overflow-y: auto;
+}
+.break-words {
+  overflow-wrap: break-word;
 }
 .rounded-lg {
   border-radius: 0.5rem;
