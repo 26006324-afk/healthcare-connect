@@ -438,7 +438,7 @@ export default function HomePage() {
 
   <div>
     <p className="text-sm font-semibold">
-      Hola, Maya 👋
+      Hola, Sofía 👋
     </p>
 
     <p className="text-xs text-slate-300">
@@ -929,7 +929,7 @@ function ProfileScreen({
       <section className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-soft">
         <SectionHeader title="Datos del paciente" text="Informacion de contacto, unidad asignada y seguridad de cuenta." />
         <div className="mt-4 grid gap-3 lg:grid-cols-2">
-          {[["Nombre", "Maya Thompson"], ["NSS", "2048-52-11"], ["Correo", "maya@correo-salud.mx"], ["Telefono", "+52 55 2100 3040"], ["Unidad", "UMF 24"], ["Vigencia", "Activa"]].map(([label, value]) => (
+          {[["Nombre", "Sofía Ramírez"], ["NSS", "2048-52-11"], ["Correo", "sofía@correo-salud.mx"], ["Telefono", "+52 55 2100 3040"], ["Unidad", "UMF 24"], ["Vigencia", "Activa"]].map(([label, value]) => (
             <div key={label} className="rounded-lg bg-slate-50 p-4">
               <p className="text-sm text-slate-500">{label}</p>
               <p className="mt-1 break-words font-bold text-slate-950">{value}</p>
@@ -981,7 +981,7 @@ function QuickSummary({ casesList }: { casesList: SupportCase[] }) {
 
     <div className="flex-1">
       <h3 className="text-2xl font-bold text-slate-900">
-        Maya Thompson
+        Sofía Ramírez
       </h3>
 
       <p className="mt-1 text-sm text-slate-500">
@@ -1003,7 +1003,7 @@ function QuickSummary({ casesList }: { casesList: SupportCase[] }) {
         </div>
 
         <div>
-          <span className="font-semibold">Contacto:</span> Laura Thompson
+          <span className="font-semibold">Contacto:</span> Laura Ramírez (madre)
         </div>
 
         <div>
@@ -1206,7 +1206,7 @@ goToScreen
           <div className="flex items-center gap-3">
             <CircleUserRound className="text-skycare-700" size={32} aria-hidden="true" />
             <div>
-              <p className="break-words font-bold text-slate-950">Maya Thompson</p>
+              <p className="break-words font-bold text-slate-950">Sofía Ramírez</p>
               <p className="text-sm text-slate-500">NSS 2048-52-11</p>
             </div>
           </div>
