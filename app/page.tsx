@@ -1,4 +1,10 @@
 "use client";
+import Script from 'next/script';
+
+// Esta línea de abajo es el truco mágico para apagar el error de TypeScript:
+declare global {
+  var embeddedservice_bootstrap: any;
+}
 
 import {
   Accessibility,
@@ -434,8 +440,8 @@ export default function HomePage() {
     {assistantExpanded && (
       <>
 
-        <div className="flex items-start gap-3">
 
+<div className="flex items-start gap-3">
   <div className="grid h-10 w-10 place-items-center rounded-full bg-white/10">
     <Bot size={24} />
   </div>
@@ -448,51 +454,64 @@ export default function HomePage() {
     <p className="text-xs text-slate-100">
       Soy Aida, tu asistente virtual de salud.
       Estoy aquí para ayudarte con citas, documentos, pagos y solicitudes médicas.
-
-
     </p>
   </div>
-
 </div>
 
 <div className="mt-4 flex w-full items-center gap-2 rounded-2xl bg-white p-3">
+  <input
+    type="text"
+    value={quickMessage}
+    onChange={(e) => setQuickMessage(e.target.value)}
+    placeholder="¿En qué puedo ayudarte hoy?"
+    className="flex-1 bg-transparent px-2 text-sm text-slate-700 outline-none"
+  />
 
-          <input
-            type="text"
-            value={quickMessage}
-            onChange={(e) => setQuickMessage(e.target.value)}
-            placeholder="¿En qué puedo ayudarte hoy?"
-            className="flex-1 bg-transparent px-2 text-sm text-slate-700 outline-none"
-          />
+  <button
+    onClick={() => {
+      if (!quickMessage.trim()) return;
+      setAiMessages((prev) => [...prev, quickMessage]);
+      goToScreen("IA y soporte");
+      setQuickMessage("");
+      setAssistantExpanded(false);
 
-          <button
-            onClick={() => {
+      if (typeof embeddedservice_bootstrap !== 'undefined') {
+        embeddedservice_bootstrap.util.openMessagingInterface();
+      } else {
+        console.log("Conectando con el servidor de Agentforce...");
+      }
+    }}
+    className="grid min-w-[36px] h-9 place-items-center rounded-[40px] bg-emerald-600 text-white"
+  >
+    <Send size={18} />
+  </button>
+</div>
 
-              if (!quickMessage.trim()) return;
-
-              setAiMessages((prev) => [...prev, quickMessage]);
-
-              goToScreen("IA y soporte");
-
-              setQuickMessage("");
-              setAssistantExpanded(false);
-
-            }}
-            className="grid min-w-[36px] h-9 place-items-center rounded-[40px] bg-emerald-600 text-white"
-          >
-            <Send size={18} />
-          </button>
-
-        </div>
+<Script
+  src="https://orgfarm-44cd132179-dev-ed.develop.my.site.com/ESWCareLink1780697646701/assets/js/bootstrap.min.js"
+  strategy="afterInteractive"
+  onLoad={() => {
+    try {
+      embeddedservice_bootstrap.settings.language = 'es'; 
+      embeddedservice_bootstrap.init(
+        '00Dfj00000Pebs5',
+        'CareLink',
+        'https://orgfarm-44cd132179-dev-ed.develop.my.site.com/ESWCareLink1780697646701',
+        {
+          scrt2URL: 'https://orgfarm-44cd132179-dev-ed.develop.my.salesforce-scrt.com'
+        }
+      );
+    } catch (err) {
+      console.error('Error al inicializar Agentforce: ', err);
+    }
+  }}
+/>
 
       </>
     )}
-{!assistantExpanded && <Bot size={26} />}
+    {!assistantExpanded && <Bot size={26} />}
   </div>
-
 </div>
-     {/* <MobileNav activeView={activeView} goToScreen={goToScreen} /> */}
-
       {profilePanelOpen ? (
   <ProfilePanel
     mode={mode}
@@ -961,66 +980,125 @@ function QuickSummary({ casesList }: { casesList: SupportCase[] }) {
     (item) => item.priority === "Alta"
   ).length;
 
+  async function enviarEmergenciaSalesforce() {
+    const datosEmergencia = {
+        Subject: "🚨 CÓDIGO ROJO: Emergencia Médica",
+        Description: "Botón de pánico presionado desde la credencial digital. Usuario requiere asistencia inmediata. Padecimiento: Asma.",
+        Priority: "High",
+        Status: "New",
+        Origin: "Web App Railway"
+    };
+
+    try {
+        const respuesta = await fetch('https://corelink.up.railway.app/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datosEmergencia)
+        });
+
+        if (respuesta.ok) {
+            alert("🚨 Alerta enviada al hospital. Enlazando al 911...");
+            window.location.href = "tel:911";
+        }
+    } catch (error) {
+        console.error(error);
+    }
+  }
+
   return (
     <section className="rounded-2xl border border-white/80 bg-white/90 p-4 shadow-soft">
       <div className="mb-4 flex items-center justify-between">
-  <div>
-    <p className="text-sm font-semibold tracking-wide text-mint-700">
-      Perfil clinico
-    </p>
-
-    <h3 className="text-xl font-bold text-slate-900">
-      Datos del paciente
-    </h3>
-  </div>
-
-  <span className="rounded-full bg-mint-100 px-3 py-1 text-xs font-semibold text-mint-700">
-    Vigencia activa
-  </span>
-</div>
-  <div className="flex items-center gap-6 min-h-[260px]">
-
-    <img
-      src="https://i.pravatar.cc/150?img=32"
-      alt="Paciente"
-      className="h-44 w-44 rounded-3xl object-cover shadow-lg"
-    />
-
-    <div className="flex-1">
-      <h3 className="text-2xl font-bold text-slate-900">
-        Sofía Ramírez
-      </h3>
-
-      <p className="mt-1 text-sm text-slate-500">
-        NSS 2048-52-11
-      </p>
-
-      <div className="mt-4 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
-
         <div>
-          <span className="font-semibold">UMF:</span> 24
+          <p className="text-sm font-semibold tracking-wide text-mint-700">
+            Perfil clinico
+          </p>
+
+          <h3 className="text-xl font-bold text-slate-900">
+            Datos del paciente
+          </h3>
         </div>
 
-        <div>
-          <span className="font-semibold">Tipo de sangre:</span> O+
-        </div>
-
-        <div>
-          <span className="font-semibold">Alergias:</span> Penicilina
-        </div>
-
-        <div>
-          <span className="font-semibold">Contacto:</span> Laura Ramírez (madre)
-        </div>
-
-        <div>
-          <span className="font-semibold">Tel emergencia:</span> 55 1234 5678
-        </div>
-
+        <span className="rounded-full bg-mint-100 px-3 py-1 text-xs font-semibold text-mint-700">
+          Vigencia activa
+        </span>
       </div>
-    </div>
-  </div>
-</section>
+
+      <div className="flex items-center gap-6 min-h-[260px]">
+        <img
+          src="https://i.pravatar.cc/150?img=32"
+          alt="Paciente"
+          className="h-44 w-44 rounded-3xl object-cover shadow-lg"
+        />
+
+        <div className="flex-1">
+          {/* 1. Nombre */}
+          <h3 className="text-2xl font-bold text-slate-900">
+            Sofía Ramírez
+          </h3>
+
+          {/* 2. NSS */}
+          <p className="mt-1 text-sm text-slate-500">
+            NSS 2048-52-11
+          </p>
+
+          <div className="mt-4 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
+            {/* 3. UMF */}
+            <div>
+              <span className="font-semibold">UMF:</span> 24
+            </div>
+
+            {/* 4. Enfermedades (Agregado aquí) */}
+            <div>
+              <span className="font-semibold">Enfermedades:</span> Asma
+            </div>
+
+            {/* 5. Tipo de sangre */}
+            <div>
+              <span className="font-semibold">Tipo de sangre:</span> O+
+            </div>
+
+            {/* 6. Alergias */}
+            <div>
+              <span className="font-semibold">Alergias:</span> Penicilina
+            </div>
+
+            {/* 7. Contacto */}
+            <div>
+              <span className="font-semibold">Contacto:</span> Laura Ramírez (madre)
+            </div>
+
+            {/* 8. Teléfono de emergencia */}
+            <div>
+              <span className="font-semibold">Tel emergencia:</span> 55 1234 5678
+            </div>
+
+            {/* Botón S.O.S al final de todo */}
+            <div className="sm:col-span-2">
+              <button 
+                onClick={enviarEmergenciaSalesforce}
+                style={{
+                  backgroundColor: '#FF4D4D',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  marginTop: '15px',
+                  width: '100%',
+                  boxShadow: '0px 4px 6px rgba(0,0,0,0.1)'
+                }}
+              >
+                🚨 ACTIVAR S.O.S (EMERGENCIA)
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 function PreviewCard({ title, action, onAction, children }: { title: string; action: string; onAction: () => void; children: React.ReactNode }) {
