@@ -101,3 +101,29 @@ input {
     transform: translateY(0);
   }
 }
+
+.accessible-mode {
+  font-size: 1.15rem;
+}
+
+.accessible-mode button {
+  min-height: 56px;
+  font-size: 1.1rem;
+}
+
+.accessible-mode input,
+.accessible-mode textarea {
+  font-size: 1.1rem;
+  min-height: 56px;
+}
+
+.accessible-mode h1,
+.accessible-mode h2,
+.accessible-mode h3 {
+  font-weight: 800;
+}
+
+.accessible-mode p,
+.accessible-mode span {
+  line-height: 1.8;
+}

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "HealthCare Connect",
-  description: "Aplicación moderna de apoyo médico para pacientes y equipos de salud"
+export const metadata = {
+  title: "CareLink",
+  description: "Portal digital del paciente",
+  icons: {
+    icon: "/carelink-logo.png",
+  },
 };
 
 export default function RootLayout({

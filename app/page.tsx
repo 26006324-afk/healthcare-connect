@@ -347,10 +347,14 @@ export default function HomePage() {
           <div className="sticky top-0 z-50 flex items-center justify-between rounded-lg bg-white/80 p-2 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="grid size-11 place-items-center rounded-lg bg-mint-100 text-mint-700">
-                <HeartPulse size={24} aria-hidden="true" />
+                <img
+  src="/carelink-logo.png"
+  alt="CareLink"
+  className="h-12 w-12"
+/>
               </div>
               <div>
-                <h1 className="text-xl font-bold tracking-normal text-slate-900">HealthCare Connect</h1>
+                <h1 className="text-xl font-bold tracking-normal text-slate-900">CareLink</h1>
                 <p className="text-sm text-slate-500">Portal digital del paciente</p>
               </div>
             </div>
@@ -441,8 +445,11 @@ export default function HomePage() {
       Hola, Sofía 👋
     </p>
 
-    <p className="text-xs text-slate-300">
-      ¿En qué puedo ayudarte hoy?
+    <p className="text-xs text-slate-100">
+      Soy Aida, tu asistente virtual de salud.
+      Estoy aquí para ayudarte con citas, documentos, pagos y solicitudes médicas.
+
+
     </p>
   </div>
 
@@ -454,7 +461,7 @@ export default function HomePage() {
             type="text"
             value={quickMessage}
             onChange={(e) => setQuickMessage(e.target.value)}
-            placeholder="Escribe tu duda..."
+            placeholder="¿En qué puedo ayudarte hoy?"
             className="flex-1 bg-transparent px-2 text-sm text-slate-700 outline-none"
           />
 
