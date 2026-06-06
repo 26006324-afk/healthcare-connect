@@ -441,52 +441,6 @@ export default function HomePage() {
       <>
 
 
-<div className="flex items-start gap-3">
-  <div className="grid h-10 w-10 place-items-center rounded-full bg-white/10">
-    <Bot size={24} />
-  </div>
-
-  <div>
-    <p className="text-sm font-semibold">
-      Hola, Sofía 👋
-    </p>
-
-    <p className="text-xs text-slate-100">
-      Soy Aida, tu asistente virtual de salud.
-      Estoy aquí para ayudarte con citas, documentos, pagos y solicitudes médicas.
-    </p>
-  </div>
-</div>
-
-<div className="mt-4 flex w-full items-center gap-2 rounded-2xl bg-white p-3">
-  <input
-    type="text"
-    value={quickMessage}
-    onChange={(e) => setQuickMessage(e.target.value)}
-    placeholder="¿En qué puedo ayudarte hoy?"
-    className="flex-1 bg-transparent px-2 text-sm text-slate-700 outline-none"
-  />
-
-  <button
-    onClick={() => {
-      if (!quickMessage.trim()) return;
-      setAiMessages((prev) => [...prev, quickMessage]);
-      goToScreen("IA y soporte");
-      setQuickMessage("");
-      setAssistantExpanded(false);
-
-      if (typeof embeddedservice_bootstrap !== 'undefined') {
-        embeddedservice_bootstrap.util.openMessagingInterface();
-      } else {
-        console.log("Conectando con el servidor de Agentforce...");
-      }
-    }}
-    className="grid min-w-[36px] h-9 place-items-center rounded-[40px] bg-emerald-600 text-white"
-  >
-    <Send size={18} />
-  </button>
-</div>
-
 <Script
   src="https://orgfarm-44cd132179-dev-ed.develop.my.site.com/ESWCareLink1780697646701/assets/js/bootstrap.min.js"
   strategy="afterInteractive"

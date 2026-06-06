@@ -127,3 +127,15 @@ input {
 .accessible-mode span {
   line-height: 1.8;
 }
+
+/* Oculta el botón flotante predeterminado de Salesforce */
+.embeddedservice-chat-header,
+.embeddedServiceConfiguration,
+.embeddedservice_bootstrap.widget {
+  display: none !important;
+}
+
+/* Si Salesforce usa Shadow DOM en esta versión, este es el selector definitivo: */
+div[id^="embeddedservice"] {
+  display: none !important;
+}
