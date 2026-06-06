@@ -371,7 +371,7 @@ export default function HomePage() {
   className="relative transition hover:scale-105"
 >
     <img
-      src="https://i.pravatar.cc/150?img=32"
+      src="/perfil-sofia.jpeg"
       alt="Foto del paciente"
       className="h-11 w-11 rounded-full object-cover border border-white shadow-sm"
     />
@@ -981,7 +981,7 @@ function QuickSummary({ casesList }: { casesList: SupportCase[] }) {
 
       <div className="flex items-center gap-6 min-h-[260px]">
         <img
-          src="https://i.pravatar.cc/150?img=32"
+          src="/perfil-sofia.jpeg"
           alt="Paciente"
           className="h-44 w-44 rounded-3xl object-cover shadow-lg"
         />
